@@ -136,17 +136,10 @@ def drawTable(self):
 def loadTable(self, table, textbox):
 
     global tableptr
-
-    print(not table.winfo_ismapped())
-    if (table.winfo_ismapped()): 
-        table.destroy()
-    else:
-        drawnewTable(table)
-        table.pack()
+    if (table.treeview is not None):
+        remove_all(table)
         
     getTable(self, textbox)
-    # 
-    
 
     temp = data
     for entry in reversed(temp):
