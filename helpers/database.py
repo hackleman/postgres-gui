@@ -1,6 +1,9 @@
 import psycopg2
+import guihelper as guihelper
 import os
 import sys
+
+params = []
 
 def connect(config):
 
@@ -15,10 +18,13 @@ def view(table):
 
     try:
         # VIEW A TABLE
-        conn = psycopg2.connect("host=localhost dbname=postgres user=postgres password=1234")
+        params = guihelper.getConfig()
+        conn = psycopg2.connect("host=%s dbname=%s user=%s password=%s" % (params[0], params[1], params[2], params[3]))
         cur = conn.cursor()
-        cur.execute('SELECT * FROM '+ table)
-        # all = cur.fetchall()
+        cur.execute('SELECT * FROM '+ table + ' FETCH FIRST 10 ROW ONLY')
+        all = cur.fetchall()
+        guihelper.setData(all)
+
         output = f'Success.  Table "{table}" exists'
         return output
 
@@ -26,6 +32,22 @@ def view(table):
         err = 'Error.  Table or View does not exist.'
         return err
 
+def viewrange(table, pointer):
+
+    try:
+        # VIEW A TABLE
+        params = guihelper.getConfig()
+
+        conn = psycopg2.connect("host=%s dbname=%s user=%s password=%s" % (params[0], params[1], params[2], params[3]))
+        cur = conn.cursor()
+        cur.execute('SELECT * FROM '+ table + ' OFFSET ' + str(pointer) + ' FETCH FIRST 10 ROW ONLY')
+        all = cur.fetchall()
+        print(all)
+        guihelper.setData(all)
+
+    except:
+        err = 'Error fetching query.'
+        return err
 # def delete(name, conn, cur):
 #         try:
 #                 # DELETE A TABLE 
